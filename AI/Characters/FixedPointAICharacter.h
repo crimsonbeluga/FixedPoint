@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "FixedPointAICharacter.generated.h"
 
+class FixedPointAIController;
 UCLASS()
 class FIXEDPOINT_API AFixedPointAICharacter : public ACharacter
 {

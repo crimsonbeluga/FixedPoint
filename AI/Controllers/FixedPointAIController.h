@@ -8,18 +8,28 @@
 
 class UAIPerceptionComponent;
 class UAISenseConfig_Sight;
-class FAIStimulus;
+struct FAIStimulus;
+class AFixedPointCharacter;
 /**
- * 
+ *
  */
+
+DECLARE_LOG_CATEGORY_EXTERN(LogFixedPointAIController, Log, All);
+
 UCLASS()
 class FIXEDPOINT_API AFixedPointAIController : public AAIController
 {
 	GENERATED_BODY()
-	
+
 public:
 
 	//LIFECYCLE
+
+	AFixedPointAIController(const FObjectInitializer& ObjectInitializer);
+
+	virtual void BeginPlay() override;
+
+	virtual void Tick(float DeltaTime) override;
 
 	//PERCEPTION
 
@@ -29,13 +39,22 @@ protected:
 
 	//PERCEPTION
 
-	void OnTargetPercieved(AActor* Actor, FAIStimulus Stimulus);
+	UFUNCTION()
+	virtual void OnTargetPercieved(AActor* Actor, FAIStimulus Stimulus);
+
+	virtual void OnTargetSighted(AActor* Actor, FAIStimulus SightStimulus);
+
+
 
 	UPROPERTY(BlueprintReadOnly, Category = "Perception")
-	TObjectPtr<UAIPerceptionComponent> PerceptionComponent = nullptr;
+	TObjectPtr<UAIPerceptionComponent> Perception = nullptr;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Perception")
 	TObjectPtr<UAISenseConfig_Sight> SightConfig = nullptr;
+
+	// The Players The AI Can Currently See
+	UPROPERTY(BlueprintReadOnly, Category = "Perception")
+	TArray<AFixedPointCharacter*> PercievedCharacters;
 
 
 
@@ -44,11 +63,7 @@ private:
 
 	//LIFECYCLE
 
-	AFixedPointAIController(const FObjectInitializer& ObjectInitializer);
-
-	virtual void BeginPlay() override;
-
-	virtual void Tick(float DeltaTime) override;
+	
 
 	//PERCEPTION
 

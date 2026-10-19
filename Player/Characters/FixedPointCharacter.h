@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Net/UnrealNetwork.h"
+#include "GenericTeamAgentInterface.h"
 #include "FixedPointCharacter.generated.h"
 
 
@@ -16,13 +17,16 @@ class UFixedPointInventoryComponent;
 DECLARE_LOG_CATEGORY_EXTERN(LogFixedPointCharacter, Log, All);
 
 UCLASS()
-class FIXEDPOINT_API AFixedPointCharacter : public ACharacter
+class FIXEDPOINT_API AFixedPointCharacter : public ACharacter, public IGenericTeamAgentInterface
 {
 	GENERATED_BODY()
 
 public:
 
-	
+	//AI
+
+	virtual FGenericTeamId GetGenericTeamId() const override;
+
 	// LIFE CYCLE
 	
 	AFixedPointCharacter(const FObjectInitializer& ObjectInitializer);

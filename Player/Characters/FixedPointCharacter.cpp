@@ -56,6 +56,15 @@ void AFixedPointCharacter::GetLifetimeReplicatedProps(
 }
 
 
+//AI
+
+// Sets the Team number for are player so the AI can use it to determine enemies
+FGenericTeamId AFixedPointCharacter::GetGenericTeamId() const
+{
+	return FGenericTeamId(1);
+}
+
+
 // MOVEMENT
 
 void AFixedPointCharacter::InitializeMovementComponent()
