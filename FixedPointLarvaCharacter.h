@@ -18,6 +18,8 @@ class FIXEDPOINT_API AFixedPointLarvaCharacter : public AFixedPointAICharacter
 	GENERATED_BODY()
 public:
 
+    AFixedPointLarvaCharacter();
+
     const TArray<TObjectPtr<AFixedPointPatrolPoint>>& GetPatrolPoints() const
     {
         return PatrolPoints;
