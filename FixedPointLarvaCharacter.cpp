@@ -3,6 +3,8 @@
 
 #include "FixedPointLarvaCharacter.h"
 #include "AI/Controllers/FixedPointLarvaAIController.h"
+#include "Components/CapsuleComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 AFixedPointLarvaCharacter::AFixedPointLarvaCharacter()
 {
@@ -16,5 +18,28 @@ AFixedPointLarvaCharacter::AFixedPointLarvaCharacter()
 	// Automatically spawn and possess with an AI Controller.
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
+	GetMesh()->SetRelativeLocation(FVector(-3.5f, 0.f, -40.f));
 
+	GetMesh()->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
+
+	GetMesh()->SetRelativeScale3D(FVector(.35f, .35f, .35f));
+
+	GetCapsuleComponent()->SetCapsuleHalfHeight(40.f);
+	GetCapsuleComponent()->SetCapsuleRadius(40.f);
+
+
+
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+
+	GetCharacterMovement()->RotationRate = (FRotator(0.000000f, 180.000000f, 0.000000f));
+		
+	GetCharacterMovement()->MaxWalkSpeed = 150.f;
+}
+
+void AFixedPointLarvaCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+
+   
 }

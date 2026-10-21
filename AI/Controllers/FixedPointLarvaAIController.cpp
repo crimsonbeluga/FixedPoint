@@ -5,6 +5,8 @@
 #include "Perception/AISenseConfig_Sight.h"
 #include "../../Player/Characters/FixedPointCharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Perception/AISense.h"
+#include "Perception/AISense_Sight.h"
 #include "BehaviorTree/BehaviorTree.h"
 
 DEFINE_LOG_CATEGORY(LogFixedPointLarvaAIController);
@@ -43,6 +45,8 @@ AFixedPointLarvaAIController::AFixedPointLarvaAIController(
 
 	// Set this controller's team to 2.
 	SetGenericTeamId(FGenericTeamId(2));
+
+	
 }
 
 void AFixedPointLarvaAIController::OnPossess(APawn* InPawn)
@@ -94,10 +98,12 @@ void AFixedPointLarvaAIController::Tick(float DeltaTime)
 // PERCEPTION
 
 // Called when perception of an actor changes through any sense.
-void AFixedPointLarvaAIController::OnTargetPercieved(AActor* Actor, FAIStimulus Stimulus)
+void AFixedPointLarvaAIController::OnTargetPercieved(
+	AActor* Actor,
+	FAIStimulus Stimulus)
 {
-	// Forward sight updates to our sight-specific function.
-	if (Stimulus.Type == SightConfig->GetSenseID())
+	// Check whether this update came from the built-in sight sense.
+	if (Stimulus.Type == UAISense::GetSenseID<UAISense_Sight>())
 	{
 		OnTargetSightUpdated(Actor, Stimulus);
 	}

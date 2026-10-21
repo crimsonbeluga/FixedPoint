@@ -90,7 +90,7 @@ AFixedPointPatrolPoint* UFixedPointBTTaskSelectPoint::SelectNextPatrolPoint(cons
 	int32 LocCurrentPatrolPointIndex = LarvaController->CurrentPatrolPointIndex;
 
 	// the amount of stored patrol points EX: if theres 5 patrol points it returns 5
-	int32 PatrolPointArrayLength = PatrolPoints.Num();
+	int32 PatrolPointArrayLength = PatrolPoints.Num(); 
 
 	// if we have no set patrol point meaning we are starting fresh do this
 	if (LocCurrentPatrolPointIndex == INDEX_NONE )

@@ -2,6 +2,8 @@
 
 
 #include "FixedPointPatrolPoint.h"
+#include "Components/ArrowComponent.h"
+
 
 // Sets default values
 AFixedPointPatrolPoint::AFixedPointPatrolPoint()
@@ -12,6 +14,14 @@ AFixedPointPatrolPoint::AFixedPointPatrolPoint()
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Static Mesh"));
 
 	SetRootComponent(StaticMesh);
+
+	DirectionArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("Direction Arrow"));
+
+	DirectionArrow->SetupAttachment(RootComponent);
+
+	DirectionArrow->ArrowColor = FColor::Red;
+
+	DirectionArrow->SetRelativeLocation(FVector(0, 0, 15));
 }
 
 // Called when the game starts or when spawned

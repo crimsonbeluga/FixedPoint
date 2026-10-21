@@ -18,6 +18,8 @@ class FIXEDPOINT_API AFixedPointLarvaCharacter : public AFixedPointAICharacter
 	GENERATED_BODY()
 public:
 
+    virtual void BeginPlay() override;
+
     AFixedPointLarvaCharacter();
 
     const TArray<TObjectPtr<AFixedPointPatrolPoint>>& GetPatrolPoints() const
