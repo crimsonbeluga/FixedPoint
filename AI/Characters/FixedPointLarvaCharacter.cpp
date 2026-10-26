@@ -2,7 +2,7 @@
 
 
 #include "FixedPointLarvaCharacter.h"
-#include "AI/Controllers/FixedPointLarvaAIController.h"
+#include "../Controllers/FixedPointLarvaAIController.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -40,6 +40,50 @@ void AFixedPointLarvaCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (MovementState == EMovementState::Patrol)
+	{
+		GetCharacterMovement()->MaxWalkSpeed = PatrolSpeed;
+
+
+
+	}
+
+
 
    
+}
+
+
+
+void AFixedPointLarvaCharacter::SetMovementState(EMovementState NewState)
+{
+	MovementState = NewState;
+
+	switch (MovementState)
+	{
+	case EMovementState::Patrol:
+
+
+		GetCharacterMovement()->MaxWalkSpeed = PatrolSpeed;
+
+		break;
+
+	case EMovementState::Roar:
+
+		GetCharacterMovement()->MaxWalkSpeed = RoarSpeed;
+
+		break;
+
+	case EMovementState::Dash:
+		
+		GetCharacterMovement()->MaxWalkSpeed = DashSpeed;
+
+		break;
+
+	case EMovementState::Stun:
+		
+		GetCharacterMovement()->MaxWalkSpeed = StunSpeed;
+
+		break;
+	}
 }

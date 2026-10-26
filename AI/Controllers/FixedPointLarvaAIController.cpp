@@ -8,6 +8,7 @@
 #include "Perception/AISense.h"
 #include "Perception/AISense_Sight.h"
 #include "BehaviorTree/BehaviorTree.h"
+#include "../Characters/FixedPointLarvaCharacter.h"
 
 DEFINE_LOG_CATEGORY(LogFixedPointLarvaAIController);
 
@@ -77,6 +78,21 @@ void AFixedPointLarvaAIController::OnPossess(APawn* InPawn)
 		LogFixedPointLarvaAIController,
 		Log,
 		TEXT("OnPossess() | Behavior Tree started"));
+
+	LarvaCharacter = Cast<AFixedPointLarvaCharacter>(GetCharacter());
+
+	if (!IsValid(LarvaCharacter))
+	{
+		UE_LOG(LogFixedPointLarvaAIController, Error, TEXT("Failed to get Larva Character!"));
+		return;
+	}
+}
+
+void AFixedPointLarvaAIController::OnUnPossess()
+{
+	Super::OnUnPossess();
+
+	LarvaCharacter = nullptr;
 }
 
 void AFixedPointLarvaAIController::BeginPlay()
@@ -87,6 +103,10 @@ void AFixedPointLarvaAIController::BeginPlay()
 	Perception->OnTargetPerceptionUpdated.AddDynamic(
 		this,
 		&AFixedPointLarvaAIController::OnTargetPercieved);
+
+	
+
+
 
 }
 
@@ -154,9 +174,29 @@ void AFixedPointLarvaAIController::OnTargetSightGained(AFixedPointCharacter* See
 	// add the seen player to the array of players ar AI is currently percieving
 	PercievedCharacters.AddUnique(SeenCharacter);
 
-
 	UE_LOG(
-		LogFixedPointLarvaAIController, Log, TEXT("OnTargetSighted() | Added perceived character to PercievedCharacters"));
+		LogFixedPointLarvaAIController, Log, TEXT("OnTargetSightGained() | Added perceived character to PercievedCharacters"));
+
+	if (bHasChosenTarget)
+	{
+		return;
+	}
+
+	UBlackboardComponent* BB = GetBlackboardComponent();
+	
+	if (!IsValid(BB))
+	{
+		UE_LOG(LogFixedPointLarvaAIController, Warning, TEXT("OnTargetSightGained() | Black Board Component Is Not Valid"));
+
+		return;
+	}
+
+	BB->SetValueAsObject(TEXT("Target Actor"), SeenCharacter);		
+
+	bHasChosenTarget = true;
+
+
+	
 
 
 }
@@ -173,8 +213,29 @@ void AFixedPointLarvaAIController::OnTargetSightLost(AFixedPointCharacter* LostC
 	// Remove the player the AI lost sight of from the array of players are AI is currently percieving
 	PercievedCharacters.Remove(LostCharacter);
 
-
 	UE_LOG(LogFixedPointLarvaAIController, Log, TEXT("OnTargetSightLost() | Removed perceived character from PercievedCharacters"));
+
+	UBlackboardComponent* BB = GetBlackboardComponent();
+
+	if (!IsValid(BB))
+	{
+		UE_LOG(LogFixedPointLarvaAIController, Warning, TEXT("OnTargetSightLost() | Black Board Component Is Not Valid"));
+
+		return;
+	}
+
+	
+	if (LostCharacter == BB->GetValueAsObject(TEXT("Target Actor")))
+	{
+		BB->ClearValue(TEXT("Target Actor"));
+
+		bHasChosenTarget = false;
+
+
+	}
+
+
+	
 
 }
 
@@ -189,10 +250,14 @@ void AFixedPointLarvaAIController::SetBlackBoardKeyPatrolLocation(FVector Patrol
 		return;
 	}
 
-	BB->SetValueAsVector(TEXT("PatrolLocation"), PatrolLocation);
+	BB->SetValueAsVector(TEXT("Patrol Location"), PatrolLocation);
+
+
 
 	UE_LOG(LogFixedPointLarvaAIController, Log,TEXT("SetBlackBoardKeyPatrolLocation() | Black Board Key Patrol Location Has Been Set: %s")
 		,*PatrolLocation.ToString());
+
+	
 }
 
 void AFixedPointLarvaAIController::ClearBlackBoardKeyPatrolLocation()
@@ -206,7 +271,22 @@ void AFixedPointLarvaAIController::ClearBlackBoardKeyPatrolLocation()
 		return;
 	}
 
-	BB->ClearValue(TEXT("PatrolLocation"));
+	BB->ClearValue(TEXT("Patrol Location"));
 
 	UE_LOG(LogFixedPointLarvaAIController, Log, TEXT("ClearBlackBoardKeyPatrolLocation() | Black Board Key Patrol Location Has Been Cleared"));
+}
+
+
+void AFixedPointLarvaAIController::SetBlackBoardKeyIsStunned(bool IsStunned)
+{
+	UBlackboardComponent* BB = GetBlackboardComponent();
+
+	if (!IsValid(BB))
+	{
+		UE_LOG(LogFixedPointLarvaAIController, Warning, TEXT("SetBlackBoardKeyIsStunned() | Black Board Component Is Not Valid"));
+
+		return;
+	}
+
+	BB->SetValueAsBool(TEXT("IsStunned"), IsStunned);
 }

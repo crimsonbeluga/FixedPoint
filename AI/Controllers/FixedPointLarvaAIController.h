@@ -10,6 +10,7 @@
 class UAIPerceptionComponent;
 class UAISenseConfig_Sight;
 class AFixedPointCharacter;
+class AFixedPointLarvaCharacter;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogFixedPointLarvaAIController, Log, All);
 
@@ -25,7 +26,7 @@ public:
 
 	AFixedPointLarvaAIController(const FObjectInitializer& ObjectInitializer);
 	
-	virtual void OnPossess(APawn* InPawn) override;
+	
 
 	virtual void BeginPlay() override;
 
@@ -37,9 +38,16 @@ public:
 
 	void ClearBlackBoardKeyPatrolLocation();
 
+	void SetBlackBoardKeyIsStunned(bool IsStunned);
+
+
 
 protected:
 
+	// LIFECYCLE
+	virtual void OnPossess(APawn* InPawn) override;
+
+	virtual void OnUnPossess() override;
 	// PERCEPTION
 
 	UFUNCTION()
@@ -50,7 +58,7 @@ protected:
 	virtual void OnTargetSightGained(AFixedPointCharacter* SeenCharacter);
 
 	virtual void OnTargetSightLost(AFixedPointCharacter* LostCharacter);
-
+	
 	UPROPERTY(BlueprintReadOnly, Category = "Perception")
 	TObjectPtr<UAIPerceptionComponent> Perception = nullptr;
 
@@ -63,4 +71,13 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
 	TObjectPtr<UBehaviorTree> BehaviorTreeAsset = nullptr;
+
+	UPROPERTY(BlueprintReadOnly, Category = "AI")
+	bool bHasChosenTarget = false;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Character")
+	AFixedPointLarvaCharacter* LarvaCharacter = nullptr;
+
+
+	
 };
