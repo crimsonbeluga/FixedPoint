@@ -289,4 +289,27 @@ void AFixedPointLarvaAIController::SetBlackBoardKeyIsStunned(bool IsStunned)
 	}
 
 	BB->SetValueAsBool(TEXT("IsStunned"), IsStunned);
+
+	UE_LOG(LogFixedPointLarvaAIController, Warning, TEXT("SetBlackBoardKeyIsStunned() |  Black Board key IsStunned Has been set "));
+
+
+}
+
+
+void AFixedPointLarvaAIController::ClearBlackBoardKeyTargetActor()
+{
+	UBlackboardComponent* BB = GetBlackboardComponent();
+
+	if (!IsValid(BB))
+	{
+		UE_LOG(LogFixedPointLarvaAIController, Warning, TEXT("SetBlackBoardKeyIsStunned() | Black Board Component Is Not Valid"));
+
+		return;
+	}
+
+	BB->ClearValue(TEXT("Target Actor"));
+
+	bHasChosenTarget = false;
+
+
 }

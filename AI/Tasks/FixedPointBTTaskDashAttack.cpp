@@ -33,6 +33,8 @@ EBTNodeResult::Type UFixedPointBTTaskDashAttack::ExecuteTask(UBehaviorTreeCompon
 {
 	bNotifyTick = true;
 
+	canGetStunned = false;
+
 	LarvaAIController = Cast<AFixedPointLarvaAIController>(OwnerComp.GetAIOwner());
 
 	if (!IsValid(LarvaAIController))
@@ -75,7 +77,18 @@ EBTNodeResult::Type UFixedPointBTTaskDashAttack::ExecuteTask(UBehaviorTreeCompon
 
 	LarvaCharacter->SetMovementState(EMovementState::Dash);
 
-	GetWorld()->GetTimerManager().SetTimer(DashStunBufferTimer,)
+	GetWorld()->GetTimerManager().SetTimer(
+		DashStunBufferTimer,
+		[this]()
+		{
+			canGetStunned = true;
+
+			UE_LOG(LogFixedPointBTTaskDashAttack, Warning, TEXT("StunTimer() | canGetStunned has been set to true "));		
+		},
+		1.0f,
+		false
+	);
+
 	return EBTNodeResult::InProgress;
 
 
@@ -132,6 +145,17 @@ void UFixedPointBTTaskDashAttack::TickTask(UBehaviorTreeComponent& OwnerComp, ui
 }
 
 
+EBTNodeResult::Type UFixedPointBTTaskDashAttack::AbortTask(
+	UBehaviorTreeComponent& OwnerComp,
+	uint8* NodeMemory)
+{
+	GetWorld()->GetTimerManager().ClearTimer(DashStunBufferTimer);
+
+	canGetStunned = false;
+
+	return EBTNodeResult::Aborted;
+}
+
 void UFixedPointBTTaskDashAttack::UpdateDashMovement(float DeltaSeconds)
 {
 
@@ -155,12 +179,23 @@ void UFixedPointBTTaskDashAttack::UpdateDashMovement(float DeltaSeconds)
 
 bool UFixedPointBTTaskDashAttack::HasDashStalled()
 {
+	if(!canGetStunned)
+	{
+
+		return false;
+
+
+
+	}
 	float LocalDashSpeed = LarvaCharacter->GetVelocity().Size2D();
+
+	float LocalMaxDashSpeed = LarvaCharacter->GetCharacterMovement()->GetMaxSpeed();
+
 
 	float LocalDashStopSpeedReductionThreshold = LarvaCharacter->GetDashStopSpeedReductionThreshold();
 
 	// if are current speed is slower then the dash speed reduction  threshold
-	if (LocalDashSpeed <= LocalDashSpeed * LocalDashStopSpeedReductionThreshold)
+	if (LocalDashSpeed <= LocalMaxDashSpeed * LocalDashStopSpeedReductionThreshold)
 	{
 		return true;
 	}

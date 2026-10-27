@@ -39,6 +39,8 @@ EBTNodeResult::Type UFixedPointBTTaskSelectPoint::ExecuteTask(UBehaviorTreeCompo
 	LarvaCharacter = LocalControlledLarvaCharacter;
 
 	
+	LarvaCharacter->SetMovementState(EMovementState::Patrol);
+
 
 	AFixedPointPatrolPoint* ChosenPatrolPoint = SelectNextPatrolPoint(LarvaCharacter->GetPatrolPoints());
 

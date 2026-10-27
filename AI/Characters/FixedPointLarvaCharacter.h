@@ -64,6 +64,11 @@ public:
 	float GetDashStopSpeedReductionThreshold() const
 	{
 		return DashStopSpeedReductionThreshold;
+	}						   
+
+	float GetStunStateDuration() const
+	{
+		return StunStateDuration;
 	}
 	
 
@@ -98,8 +103,10 @@ float StunSpeed = 0.f;
 
 
 UPROPERTY(EditDefaultsOnly, Category = "AI | Dash")
-float DashStopSpeedReductionThreshold = 0.5f;
+float DashStopSpeedReductionThreshold = 0.8f;
 
+UPROPERTY(EditDefaultsOnly, Category = "AI | Dash")
+float StunStateDuration = 1.f;
 
 
 

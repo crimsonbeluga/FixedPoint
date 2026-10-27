@@ -4,10 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/BTTaskNode.h"
-#include "FixedPointBTTaskDashAttack.generated.h"	 ]
+#include "FixedPointBTTaskDashAttack.generated.h"	
 
-class FTimerHandle;
-
+struct FTimerHandle;
 /**
  * 
  */
@@ -36,9 +35,16 @@ protected:
 
 	virtual void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 
+	virtual EBTNodeResult::Type AbortTask(
+		UBehaviorTreeComponent& OwnerComp,
+		uint8* NodeMemory) override;
+
+
 	void UpdateDashMovement(float DeltaSeconds);
 
 	bool HasDashStalled();
+
+	bool canGetStunned = false;
 
 	AFixedPointLarvaCharacter* LarvaCharacter = nullptr;
 

@@ -40,7 +40,9 @@ public:
 
 	void SetBlackBoardKeyIsStunned(bool IsStunned);
 
+	void ClearBlackBoardKeyTargetActor();
 
+	virtual void OnTargetSightLost(AFixedPointCharacter* LostCharacter);
 
 protected:
 
@@ -57,7 +59,7 @@ protected:
 
 	virtual void OnTargetSightGained(AFixedPointCharacter* SeenCharacter);
 
-	virtual void OnTargetSightLost(AFixedPointCharacter* LostCharacter);
+	
 	
 	UPROPERTY(BlueprintReadOnly, Category = "Perception")
 	TObjectPtr<UAIPerceptionComponent> Perception = nullptr;
