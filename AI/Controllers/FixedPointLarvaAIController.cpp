@@ -191,9 +191,11 @@ void AFixedPointLarvaAIController::OnTargetSightGained(AFixedPointCharacter* See
 		return;
 	}
 
+
 	BB->SetValueAsObject(TEXT("Target Actor"), SeenCharacter);		
 
-	bHasChosenTarget = true;
+	SetHasChosenTarget(true);
+	
 
 
 	
@@ -223,15 +225,21 @@ void AFixedPointLarvaAIController::OnTargetSightLost(AFixedPointCharacter* LostC
 
 		return;
 	}
-
+	
 	
 	if (LostCharacter == BB->GetValueAsObject(TEXT("Target Actor")))
 	{
 		BB->ClearValue(TEXT("Target Actor"));
 
-		bHasChosenTarget = false;
+
+		SetHasChosenTarget(false); 
 
 
+
+	}
+	else 
+	{
+		UE_LOG(LogFixedPointLarvaAIController, Warning, TEXT("OnTargetSightLost() | could not clear black board value target actor because the past in lost character is not the same object as what is stored in target actor "));
 	}
 
 
@@ -290,7 +298,7 @@ void AFixedPointLarvaAIController::SetBlackBoardKeyIsStunned(bool IsStunned)
 
 	BB->SetValueAsBool(TEXT("IsStunned"), IsStunned);
 
-	UE_LOG(LogFixedPointLarvaAIController, Warning, TEXT("SetBlackBoardKeyIsStunned() |  Black Board key IsStunned Has been set "));
+	UE_LOG(LogFixedPointLarvaAIController, Log, TEXT("SetBlackBoardKeyIsStunned() |  Black Board key IsStunned Has been set "));
 
 
 }
@@ -309,7 +317,15 @@ void AFixedPointLarvaAIController::ClearBlackBoardKeyTargetActor()
 
 	BB->ClearValue(TEXT("Target Actor"));
 
-	bHasChosenTarget = false;
+	SetHasChosenTarget(false);
+
 
 
 }
+
+
+void AFixedPointLarvaAIController::SetHasChosenTarget(bool HasChosenTarget)
+{
+	bHasChosenTarget = HasChosenTarget;
+}
+

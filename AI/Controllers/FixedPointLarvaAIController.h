@@ -44,6 +44,8 @@ public:
 
 	virtual void OnTargetSightLost(AFixedPointCharacter* LostCharacter);
 
+	void SetHasChosenTarget(bool HasChosenTarget);
+
 protected:
 
 	// LIFECYCLE

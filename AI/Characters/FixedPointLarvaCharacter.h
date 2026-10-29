@@ -11,14 +11,25 @@
  * 
  */
 
+
+
+
+
 UENUM(BlueprintType)
 enum class EMovementState : uint8
 {
 	Patrol UMETA(DisplayName = "Patrol"),
 	Roar UMETA(DisplayName = "Roar"),
 	Dash UMETA(DisplayName = "Dash"),
-	Stun UMETA(DisplayName = "Dash")
+	Stun UMETA(DisplayName = "Stun")
 };
+
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
+	FOnMovementStateChanged,
+	EMovementState,
+	NewMovementState
+);
 
 class AFixedPointPatrolPoint;
 UCLASS()
@@ -106,13 +117,19 @@ UPROPERTY(EditDefaultsOnly, Category = "AI | Dash")
 float DashStopSpeedReductionThreshold = 0.8f;
 
 UPROPERTY(EditDefaultsOnly, Category = "AI | Dash")
-float StunStateDuration = 1.f;
+float StunStateDuration = 3.f;
+
+UFUNCTION()
+void OnRep_MovementState();
+
+virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 
-
-UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+UPROPERTY(ReplicatedUsing = OnRep_MovementState,BlueprintReadOnly, Category = "AI | Movement")
 EMovementState MovementState = EMovementState::Patrol;
 
+UPROPERTY(BlueprintAssignable, Category = "AI | Movement")
+FOnMovementStateChanged OnMovementStateChanged;
 
 private:
 

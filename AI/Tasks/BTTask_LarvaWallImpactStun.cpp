@@ -52,10 +52,7 @@ EBTNodeResult::Type UBTTask_LarvaWallImpactStun::ExecuteTask(UBehaviorTreeCompon
 		return EBTNodeResult::Failed;
 	}
 
-	AFixedPointCharacter* ForgottenPlayer =
-		Cast<AFixedPointCharacter>(
-			BB->GetValueAsObject(TEXT("Target Actor"))
-		);
+	AFixedPointCharacter* ForgottenPlayer = Cast<AFixedPointCharacter>(BB->GetValueAsObject(TEXT("Target Actor")));
 
 	UAIPerceptionComponent* Perception =
 		LarvaAIController->GetAIPerceptionComponent();
@@ -63,29 +60,20 @@ EBTNodeResult::Type UBTTask_LarvaWallImpactStun::ExecuteTask(UBehaviorTreeCompon
 	if (IsValid(Perception))
 	{
 		Perception->SetSenseEnabled(
-			UAISense_Sight::StaticClass(),
-			false
-		);
+			UAISense_Sight::StaticClass(), false);
 
 		if (IsValid(ForgottenPlayer))
 		{
 			Perception->ForgetActor(ForgottenPlayer);
+			LarvaAIController->OnTargetSightLost(ForgottenPlayer);
 		}
 	}
-
-	if (IsValid(ForgottenPlayer))
-	{
-		LarvaAIController->OnTargetSightLost(ForgottenPlayer);
-	}
-	else
-	{
-		LarvaAIController->ClearBlackBoardKeyTargetActor();
-	}
-
+	
 	// The stun must happen even if the player is no longer visible.
 	LarvaCharacter->SetMovementState(EMovementState::Stun);
 
 	TWeakObjectPtr<AFixedPointLarvaAIController> WeakController = LarvaAIController;
+
 
 	GetWorld()->GetTimerManager().SetTimer(
 		StunTimerHandle,
@@ -96,8 +84,7 @@ EBTNodeResult::Type UBTTask_LarvaWallImpactStun::ExecuteTask(UBehaviorTreeCompon
 
 			if (AFixedPointLarvaAIController* Controller = WeakController.Get())
 			{
-				Controller->SetBlackBoardKeyIsStunned(false);
-
+				// Re-enable sight before leaving the stun state.
 				if (UAIPerceptionComponent* Perception = Controller->GetAIPerceptionComponent())
 				{
 					Perception->SetSenseEnabled(
@@ -105,6 +92,10 @@ EBTNodeResult::Type UBTTask_LarvaWallImpactStun::ExecuteTask(UBehaviorTreeCompon
 						true
 					);
 				}
+
+				// Exit the stun state.
+				// The Behavior Tree decorator will abort the stun branch.
+				Controller->SetBlackBoardKeyIsStunned(false);
 
 				UE_LOG(LogBTTaskLarvaWallImpactStun, Warning,
 					TEXT("STUN RECOVERY COMPLETED"));
@@ -121,3 +112,33 @@ EBTNodeResult::Type UBTTask_LarvaWallImpactStun::ExecuteTask(UBehaviorTreeCompon
 
 	return EBTNodeResult::InProgress;
 }
+
+EBTNodeResult::Type UBTTask_LarvaWallImpactStun::AbortTask(
+	UBehaviorTreeComponent& OwnerComp,
+	uint8* NodeMemory)
+{
+	UE_LOG(LogBTTaskLarvaWallImpactStun, Warning,
+		TEXT("STUN TASK ABORTED"));
+
+	// Cancel the stun timer if it is still running.
+	if (UWorld* World = OwnerComp.GetWorld())
+	{
+		World->GetTimerManager().ClearTimer(StunTimerHandle);
+	}
+
+	// Restore AI sight if the stun task is interrupted.
+	if (IsValid(LarvaAIController))
+	{
+		if (UAIPerceptionComponent* Perception =
+			LarvaAIController->GetAIPerceptionComponent())
+		{
+			Perception->SetSenseEnabled(
+				UAISense_Sight::StaticClass(),
+				true
+			);
+		}
+	}
+
+	return EBTNodeResult::Aborted;
+}
+

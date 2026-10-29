@@ -131,7 +131,11 @@ void UFixedPointBTTaskDashAttack::TickTask(UBehaviorTreeComponent& OwnerComp, ui
 
 	if(HasDashStalled())
 	{
+
+		UE_LOG(LogFixedPointBTTaskDashAttack, Log, TEXT("TickTask() |  Dash Has Stalled "))
+
 		LarvaAIController->SetBlackBoardKeyIsStunned(true);
+		
 		return;
 	}
 		
@@ -151,7 +155,11 @@ EBTNodeResult::Type UFixedPointBTTaskDashAttack::AbortTask(
 {
 	GetWorld()->GetTimerManager().ClearTimer(DashStunBufferTimer);
 
+	UE_LOG(LogFixedPointBTTaskDashAttack, Log, TEXT("AbortTask() | DashStunBufferTimer Cleared "))
+
 	canGetStunned = false;
+
+	UE_LOG(LogFixedPointBTTaskDashAttack, Log, TEXT("AbortTask() | canGetStunned set to false "))
 
 	return EBTNodeResult::Aborted;
 }
